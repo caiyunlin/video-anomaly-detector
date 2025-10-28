@@ -176,6 +176,8 @@ class AzureAIVideoAnalyzer:
     "false_positive_risk": 0.0-1.0
 }}
 
+if user using Chinese, then you will reply in Chinese also.
+
 Please conduct professional and objective analysis based on the video frames."""
 
     def _validate_analysis_result(self, result: Dict) -> Dict:

@@ -216,3 +216,20 @@ uploads/*
 
 # Azure deployment files
 .azure/
+
+# Test and debug files
+test_*.py
+check_*.py
+*_test.py
+*_fix.py
+fix-*.bat
+fix-*.sh
+debug-*.py
+temp-*.py
+
+# Temporary documentation
+*_FIX.md
+*_DEBUG.md
+*_TEMP.md
+TEMP_*.md
+DEBUG_*.md
