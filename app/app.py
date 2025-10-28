@@ -126,10 +126,58 @@ def index():
     """Home page."""
     return render_template('index.html')
 
+@app.route('/static/videos/<filename>')
+def demo_videos(filename):
+    """Serve demo videos."""
+    return send_from_directory(os.path.join('static', 'videos'), filename)
+
 @app.route('/config-status')
 def config_status():
     """Configuration status page."""
     return render_template('config-status.html')
+
+def analyze_video_file(filepath, anomaly_prompt, is_demo=False):
+    """Common function to analyze video file."""
+    try:
+        # Extract frames from video
+        logger.info(f"Processing video: {filepath}")
+        frames, video_info = extract_frames_from_video(filepath)
+        
+        # Analyze with Azure AI
+        if ai_analyzer is None:
+            return {
+                'error': 'Azure AI analyzer not properly configured. Please check Azure OpenAI configuration.',
+                'config_help': {
+                    'required_vars': [
+                        'AZURE_OPENAI_ENDPOINT',
+                        'AZURE_OPENAI_API_KEY',
+                        'AZURE_OPENAI_DEPLOYMENT_NAME'
+                    ],
+                    'example_endpoint': 'https://your-resource-name.openai.azure.com/'
+                }
+            }, 500
+        
+        logger.info("Starting video analysis with Azure AI Foundry")
+        analysis_result = ai_analyzer.analyze_frames(frames, anomaly_prompt, video_info)
+        
+        # Clean up the uploaded file (but not demo files)
+        if not is_demo and os.path.exists(filepath):
+            os.remove(filepath)
+        
+        logger.info("Video analysis completed successfully")
+        return {
+            'success': True,
+            'video_info': video_info,
+            'analysis': analysis_result,
+            'prompt_used': anomaly_prompt
+        }, 200
+        
+    except Exception as e:
+        logger.error(f"Error processing video: {str(e)}")
+        # Clean up the uploaded file in case of error (but not demo files)
+        if not is_demo and os.path.exists(filepath):
+            os.remove(filepath)
+        return {'error': f'Video processing failed: {str(e)}'}, 500
 
 @app.route('/upload', methods=['POST'])
 def upload_video():
@@ -158,51 +206,51 @@ def upload_video():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
             
-            try:
-                # Extract frames from video
-                logger.info(f"Processing video: {filename}")
-                frames, video_info = extract_frames_from_video(filepath)
-                
-                # Analyze with Azure AI
-                if ai_analyzer is None:
-                    return jsonify({
-                        'error': 'Azure AI analyzer not properly configured. Please check Azure OpenAI configuration.',
-                        'config_help': {
-                            'required_vars': [
-                                'AZURE_OPENAI_ENDPOINT',
-                                'AZURE_OPENAI_API_KEY',
-                                'AZURE_OPENAI_DEPLOYMENT_NAME'
-                            ],
-                            'example_endpoint': 'https://your-resource-name.openai.azure.com/'
-                        }
-                    }), 500
-                
-                logger.info("Starting video analysis with Azure AI Foundry")
-                analysis_result = ai_analyzer.analyze_frames(frames, anomaly_prompt, video_info)
-                
-                # Clean up the uploaded file
-                os.remove(filepath)
-                
-                logger.info("Video analysis completed successfully")
-                return jsonify({
-                    'success': True,
-                    'video_info': video_info,
-                    'analysis': analysis_result,
-                    'prompt_used': anomaly_prompt
-                })
-                
-            except Exception as e:
-                logger.error(f"Error processing video: {str(e)}")
-                # Clean up the uploaded file in case of error
-                if os.path.exists(filepath):
-                    os.remove(filepath)
-                return jsonify({'error': f'Video processing failed: {str(e)}'}), 500
+            # Analyze the video
+            result, status_code = analyze_video_file(filepath, anomaly_prompt, is_demo=False)
+            return jsonify(result), status_code
         
         else:
             return jsonify({'error': 'Unsupported file format. Please upload MP4, AVI, MOV, MKV or WEBM video files'}), 400
             
     except Exception as e:
         return jsonify({'error': f'Upload failed: {str(e)}'}), 500
+
+@app.route('/analyze-demo', methods=['POST'])
+def analyze_demo_video():
+    """Handle demo video analysis."""
+    try:
+        demo_video = request.form.get('demo_video', '').strip()
+        anomaly_prompt = request.form.get('anomaly_prompt', '').strip()
+        
+        if not demo_video:
+            return jsonify({'error': 'No demo video selected'}), 400
+        
+        if not anomaly_prompt:
+            return jsonify({'error': 'Please enter the anomaly types to detect'}), 400
+        
+        # Validate demo video file exists
+        demo_filepath = os.path.join('app', 'static', 'videos', demo_video)
+        if not os.path.exists(demo_filepath):
+            return jsonify({'error': f'Demo video {demo_video} not found'}), 404
+        
+        # Validate file extension
+        if not allowed_file(demo_video):
+            return jsonify({'error': 'Invalid demo video format'}), 400
+        
+        logger.info(f"Analyzing demo video: {demo_video}")
+        
+        # Analyze the demo video
+        result, status_code = analyze_video_file(demo_filepath, anomaly_prompt, is_demo=True)
+        
+        # Add demo video info to result
+        if 'success' in result and result['success']:
+            result['demo_video_used'] = demo_video
+        
+        return jsonify(result), status_code
+            
+    except Exception as e:
+        return jsonify({'error': f'Demo video analysis failed: {str(e)}'}), 500
 
 @app.route('/health')
 def health_check():

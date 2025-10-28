@@ -150,6 +150,52 @@
             box-shadow: 0 0 0 0.2rem rgba(0, 120, 212, 0.25);
         }
 
+        .video-preview-container {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .video-preview-window {
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .demo-video-player {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .form-check-label:hover {
+            background-color: #f0f8ff;
+        }
+
+        .form-check-input:checked + .form-check-label {
+            background-color: #e3f2fd;
+            border-left: 3px solid var(--primary-color);
+            padding-left: 12px;
+        }
+
         @media (max-width: 768px) {
             .upload-zone {
                 padding: 2rem 1rem;
@@ -157,6 +203,10 @@
             
             .header h1 {
                 font-size: 2rem;
+            }
+            
+            .video-preview-window {
+                min-height: 120px;
             }
         }
     </style>
@@ -198,17 +248,82 @@
                                 </div>
                             </div>
 
-                            <!-- Video Upload -->
-                            <div class="upload-zone" id="uploadZone">
-                                <i class="fas fa-cloud-upload-alt fa-4x mb-3 text-primary"></i>
-                                <h4>Drag video files here or click to select files</h4>
-                                <p class="text-muted mb-3">Supports MP4, AVI, MOV, MKV, WEBM formats</p>
-                                <p class="text-muted">Maximum file size: 50MB</p>
-                                <input type="file" id="videoFile" name="video" accept="video/*" style="display: none;">
-                                <button type="button" class="btn btn-primary btn-lg" id="selectFileBtn">
-                                    <i class="fas fa-folder-open me-2"></i>
-                                    Select Video File
-                                </button>
+                            <!-- Video Source Selection -->
+                            <div class="mb-4">
+                                <label for="videoSource" class="form-label">
+                                    <i class="fas fa-video me-2"></i>
+                                    <strong>Video Source</strong>
+                                </label>
+                                <select class="form-select" id="videoSource" name="video_source">
+                                    <option value="upload">Upload Video File</option>
+                                    <option value="demo">Use Demo Video</option>
+                                </select>
+                            </div>
+
+                            <!-- Upload Section -->
+                            <div id="uploadSection">
+                                <div class="upload-zone" id="uploadZone">
+                                    <i class="fas fa-cloud-upload-alt fa-4x mb-3 text-primary"></i>
+                                    <h4>Drag video files here or click to select files</h4>
+                                    <p class="text-muted mb-3">Supports MP4, AVI, MOV, MKV, WEBM formats</p>
+                                    <p class="text-muted">Maximum file size: 50MB</p>
+                                    <input type="file" id="videoFile" name="video" accept="video/*" style="display: none;">
+                                    <button type="button" class="btn btn-primary btn-lg" id="selectFileBtn">
+                                        <i class="fas fa-folder-open me-2"></i>
+                                        Select Video File
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Demo Video Selection -->
+                            <div id="demoSection" style="display: none;">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-play-circle me-2"></i>
+                                            Select Demo Video
+                                        </h5>
+                                        
+                                        <div class="row">
+                                            <!-- Video Selection -->
+                                            <div class="col-md-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input demo-radio" type="radio" name="demo_video" id="demoFire" value="video_fire.mp4">
+                                                    <label class="form-check-label" for="demoFire">
+                                                        <strong>Fire Detection Demo</strong>
+                                                        <br><small class="text-muted">Test video for fire/smoke detection scenarios</small>
+                                                    </label>
+                                                </div>
+                                                <div class="form-check mt-3">
+                                                    <input class="form-check-input demo-radio" type="radio" name="demo_video" id="demoThief" value="video_thief.mp4">
+                                                    <label class="form-check-label" for="demoThief">
+                                                        <strong>Security Incident Demo</strong>
+                                                        <br><small class="text-muted">Test video for suspicious behavior/theft detection</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Video Preview -->
+                                            <div class="col-md-6">
+                                                <div class="video-preview-container">
+                                                    <h6 class="mb-2">
+                                                        <i class="fas fa-eye me-2"></i>
+                                                        Video Preview
+                                                    </h6>
+                                                    <div id="videoPreviewWindow" class="video-preview-window">
+                                                        <div class="preview-placeholder">
+                                                            <i class="fas fa-video fa-2x text-muted"></i>
+                                                            <p class="text-muted mt-2 mb-0">Select a demo video to preview</p>
+                                                        </div>
+                                                        <video id="demoVideoPlayer" class="demo-video-player" controls style="display: none;">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Selected File Display -->
@@ -294,6 +409,24 @@
         const errorMessage = document.getElementById('errorMessage');
         const videoInfo = document.getElementById('videoInfo');
         const analysisContent = document.getElementById('analysisContent');
+        const videoSource = document.getElementById('videoSource');
+        const uploadSection = document.getElementById('uploadSection');
+        const demoSection = document.getElementById('demoSection');
+        const demoVideoPlayer = document.getElementById('demoVideoPlayer');
+        const videoPreviewWindow = document.getElementById('videoPreviewWindow');
+
+        // Video source selection handling
+        videoSource.addEventListener('change', function() {
+            if (this.value === 'upload') {
+                uploadSection.style.display = 'block';
+                demoSection.style.display = 'none';
+            } else {
+                uploadSection.style.display = 'none';
+                demoSection.style.display = 'block';
+            }
+            // Only reset the relevant parts, not the video source selection
+            clearPreviousResults();
+        });
 
         // File upload handling
         uploadZone.addEventListener('click', (event) => {
@@ -331,6 +464,49 @@
 
         videoFile.addEventListener('change', handleFileSelection);
 
+        // Demo video selection and preview handling
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners to demo video radio buttons
+            const demoRadios = document.querySelectorAll('.demo-radio');
+            demoRadios.forEach(radio => {
+                radio.addEventListener('change', handleDemoVideoSelection);
+            });
+        });
+
+        function handleDemoVideoSelection() {
+            const selectedDemo = document.querySelector('input[name="demo_video"]:checked');
+            if (selectedDemo) {
+                const videoFileName = selectedDemo.value;
+                const videoUrl = `/static/videos/${videoFileName}`;
+                
+                // Show video player and hide placeholder
+                const placeholder = videoPreviewWindow.querySelector('.preview-placeholder');
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+                
+                demoVideoPlayer.src = videoUrl;
+                demoVideoPlayer.style.display = 'block';
+                demoVideoPlayer.load(); // Reload the video element
+                
+                // Auto-play the video for preview (muted)
+                demoVideoPlayer.muted = true;
+                demoVideoPlayer.currentTime = 0;
+                
+                // Play a short preview (first 3 seconds)
+                demoVideoPlayer.play().then(() => {
+                    setTimeout(() => {
+                        demoVideoPlayer.pause();
+                        demoVideoPlayer.currentTime = 0;
+                        demoVideoPlayer.muted = false; // Restore audio for user control
+                    }, 3000);
+                }).catch(() => {
+                    // If autoplay fails, just load the video
+                    demoVideoPlayer.muted = false;
+                });
+            }
+        }
+
         function handleFileSelection() {
             const file = videoFile.files[0];
             if (file) {
@@ -359,43 +535,76 @@
             e.preventDefault();
             
             const anomalyPrompt = document.getElementById('anomalyPrompt').value.trim();
-            const file = videoFile.files[0];
+            const sourceType = videoSource.value;
             
             if (!anomalyPrompt) {
                 showError('Please enter anomaly detection instructions');
                 return;
             }
             
-            if (!file) {
-                showError('Please select a video file');
-                return;
-            }
-            
-            // Show loading state
-            showLoading();
-            
-            // Prepare form data
-            const formData = new FormData();
-            formData.append('video', file);
+            let formData = new FormData();
             formData.append('anomaly_prompt', anomalyPrompt);
             
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    displayResults(data);
-                } else {
-                    showError(data.error || 'Analysis failed, please try again');
+            if (sourceType === 'upload') {
+                const file = videoFile.files[0];
+                if (!file) {
+                    showError('Please select a video file');
+                    return;
                 }
-            } catch (error) {
-                showError('Network error: ' + error.message);
-            } finally {
-                hideLoading();
+                formData.append('video', file);
+                
+                // Show loading state
+                showLoading();
+                
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        displayResults(data);
+                    } else {
+                        showError(data.error || 'Analysis failed, please try again');
+                    }
+                } catch (error) {
+                    showError('Network error: ' + error.message);
+                } finally {
+                    hideLoading();
+                }
+            } else {
+                // Demo video handling
+                const selectedDemo = document.querySelector('input[name="demo_video"]:checked');
+                if (!selectedDemo) {
+                    showError('Please select a demo video');
+                    return;
+                }
+                
+                formData.append('demo_video', selectedDemo.value);
+                
+                // Show loading state
+                showLoading();
+                
+                try {
+                    const response = await fetch('/analyze-demo', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        displayResults(data);
+                    } else {
+                        showError(data.error || 'Analysis failed, please try again');
+                    }
+                } catch (error) {
+                    showError('Network error: ' + error.message);
+                } finally {
+                    hideLoading();
+                }
             }
         });
 
@@ -447,6 +656,12 @@
                     <strong>Detection Instructions:</strong>
                     <span>${data.prompt_used}</span>
                 </div>
+                ${data.demo_video_used ? `
+                <div class="info-item">
+                    <strong>Demo Video:</strong>
+                    <span>${data.demo_video_used}</span>
+                </div>
+                ` : ''}
             `;
             
             // Display analysis results
@@ -520,12 +735,47 @@
             results.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // Reset form function
-        function resetForm() {
-            uploadForm.reset();
+        // Clear previous results and selections (used when switching video source)
+        function clearPreviousResults() {
             selectedFile.style.display = 'none';
             results.style.display = 'none';
             hideError();
+            
+            // Clear file selection
+            videoFile.value = '';
+            
+            // Uncheck demo video selections and reset preview
+            const demoRadios = document.querySelectorAll('input[name="demo_video"]');
+            demoRadios.forEach(radio => radio.checked = false);
+            
+            // Reset video preview
+            resetVideoPreview();
+        }
+
+        // Reset video preview to placeholder
+        function resetVideoPreview() {
+            const placeholder = videoPreviewWindow.querySelector('.preview-placeholder');
+            if (placeholder) {
+                placeholder.style.display = 'block';
+            }
+            
+            demoVideoPlayer.style.display = 'none';
+            demoVideoPlayer.pause();
+            demoVideoPlayer.src = '';
+        }
+
+        // Reset form function (complete reset including video source)
+        function resetForm() {
+            // Clear anomaly prompt
+            document.getElementById('anomalyPrompt').value = '';
+            
+            // Reset video source to upload
+            videoSource.value = 'upload';
+            uploadSection.style.display = 'block';
+            demoSection.style.display = 'none';
+            
+            // Clear all other selections and results
+            clearPreviousResults();
         }
 
         // Add reset button functionality
