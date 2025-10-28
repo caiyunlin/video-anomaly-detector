@@ -1,6 +1,6 @@
-# 🎥 视频异常检测系统
+# 🎥 Video Anomaly Detection System
 
-基于 Azure AI Foundry 的智能监控视频异常检测系统。支持上传监控视频并通过自定义 prompt 指定异常检测类型，利用 GPT-4V 进行精准的视频内容分析。
+AI-powered surveillance video anomaly detection system based on Azure AI Foundry. Upload surveillance videos and specify anomaly detection types through custom prompts, utilizing GPT-4o for precise video content analysis.
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.0-green)
@@ -8,162 +8,184 @@
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## ✨ 功能特性
+## Live Demo
 
-- 🔍 **智能异常检测**: 基于 Azure OpenAI GPT-4V 的视频内容分析
-- 🎯 **自定义检测目标**: 通过 prompt 指定要检测的异常类型
-- 📹 **多格式支持**: 支持 MP4, AVI, MOV, MKV, WEBM 等视频格式
-- 🚀 **容器化部署**: 完全基于 Docker，支持 Azure Container Apps 部署
-- 📊 **实时分析**: 提供详细的异常检测结果和置信度评分
-- 🎨 **现代化界面**: 响应式 Web 界面，支持拖拽上传
+- https://video-anomaly-detector.bravemushroom-502e9645.southeastasia.azurecontainerapps.io/
 
-## 🏗️ 系统架构
+## ✨ Key Features
+
+- 🔍 **Intelligent Anomaly Detection**: Video content analysis powered by Azure OpenAI GPT-4o
+- 🎯 **Custom Detection Targets**: Specify anomaly types through custom prompts
+- 📹 **Multi-format Support**: Supports MP4, AVI, MOV, MKV, WEBM video formats
+- 🚀 **Containerized Deployment**: Docker-based with Azure Container Apps support
+- 📊 **Real-time Analysis**: Detailed anomaly detection results with confidence scores
+- 🎨 **Modern Interface**: Responsive web UI with drag-and-drop upload
+- 🎬 **Demo Video Preview**: Built-in video preview for testing scenarios
+
+## 🏗️ System Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Web 前端      │    │   Flask 后端    │    │  Azure OpenAI   │
+│   Web Frontend  │    │  Flask Backend  │    │  Azure OpenAI   │
 │                 │────│                 │────│                 │
-│  • 文件上传     │    │  • 视频处理     │    │  • GPT-4V 分析  │
-│  • 结果展示     │    │  • 帧提取       │    │  • 异常检测     │
-│  • 进度显示     │    │  • API 接口     │    │  • 置信度评估   │
+│  • File Upload  │    │  • Video Process│    │  • GPT-4o Model │
+│  • Result View  │    │  • Frame Extract│    │  • Anomaly Det. │
+│  • Progress UI  │    │  • API Endpoints│    │  • Confidence   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## 📋 系统要求
+## 📋 System Requirements
 
 - **Python**: 3.11+
 - **Docker**: 20.10+
-- **Azure OpenAI**: GPT-4V 模型部署
-- **内存**: 最低 2GB RAM
-- **存储**: 最低 1GB 可用空间
+- **Azure OpenAI**: GPT-4o model deployment
+- **Memory**: Minimum 2GB RAM
+- **Storage**: Minimum 1GB available space
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 1. 克隆项目
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/your-username/video-anomaly-detector.git
 cd video-anomaly-detector
 ```
 
-### 2. 配置环境变量
+### 2. Configure Environment Variables
 
 ```bash
-# 复制环境变量模板
+# Copy environment template
 cp .env.example .env
 
-# 编辑 .env 文件，填入您的 Azure OpenAI 配置
+# Edit .env file with your Azure OpenAI configuration
 ```
 
-`.env` 文件配置示例：
+`.env` Configuration Example:
 ```env
 # Azure OpenAI Configuration
 AZURE_OPENAI_API_KEY=your_azure_openai_api_key_here
 AZURE_OPENAI_ENDPOINT=https://your-resource-name.openai.azure.com/
 AZURE_OPENAI_API_VERSION=2024-02-15-preview
-AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4-vision-preview
+AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o
 
 # Flask Configuration
 FLASK_ENV=development
 SECRET_KEY=your_secret_key_here
 ```
 
-### 3. 本地运行
+### 3. Local Development
 
-#### 方式一: Docker 运行 (推荐)
+#### Option 1: Docker (Recommended)
 
 ```bash
 # Windows
-.\start.bat
+.\docker-run.bat
 
 # Linux/macOS
-chmod +x start.sh
-./start.sh
+chmod +x docker-run.sh
+./docker-run.sh
 ```
 
-#### 方式二: 直接运行
+#### Option 2: Direct Run
 
 ```bash
-# 安装依赖
+# Install dependencies
 pip install -r requirements.txt
 
-# 运行应用
+# Run application
 cd app
 python app.py
 ```
 
-### 4. 访问应用
+### 4. Access Application
 
-打开浏览器访问: http://localhost:8080
+Open browser and visit: http://localhost:8080
 
-## 🌐 Azure 部署
+## 🌐 Azure Deployment
 
-### 一键部署到 Azure Container Apps
+### One-Click Deploy to Azure Container Apps
 
 ```bash
-# 确保已安装并登录 Azure CLI
+# Ensure Azure CLI is installed and logged in
 az login
 
-# 运行一键部署脚本
+# Run one-click deployment script
 chmod +x azure/one-click-deploy.sh
 ./azure/one-click-deploy.sh
 ```
 
-### 手动部署
+### Manual Deployment
 
-详细的部署步骤请参考：
-- [PowerShell 部署脚本](azure/deploy-to-azure.ps1)
-- [Bash 部署脚本](azure/deploy-to-azure.sh)
-- [Kubernetes 配置](azure/kubernetes-deployment.yaml)
+For detailed deployment steps, refer to:
+- [PowerShell Deployment Script](azure/deploy-to-azure.ps1)
+- [Bash Deployment Script](azure/deploy-to-azure.sh)
+- [Kubernetes Configuration](azure/kubernetes-deployment.yaml)
 
-## 📖 使用指南
+## 📖 User Guide
 
-### 1. 上传视频
+### 1. Video Upload Options
 
-- 支持拖拽上传或点击选择文件
-- 文件大小限制：50MB
-- 支持格式：MP4, AVI, MOV, MKV, WEBM
+**Upload Video File:**
+- Supports drag-and-drop or click to select files
+- File size limit: 50MB
+- Supported formats: MP4, AVI, MOV, MKV, WEBM
 
-### 2. 设置检测指令
+**Use Demo Video:**
+- 🔥 **Fire Detection Demo** - Test video for fire/smoke detection scenarios
+- 🚨 **Security Incident Demo** - Test video for suspicious behavior/theft detection
+- 📺 **Video Preview** - Click to preview demo videos before selection
 
-在"异常检测指令"框中输入您想要检测的异常类型，例如：
+### 2. Set Detection Instructions
 
-```
-检测人员跌倒或摔倒行为
-```
-
-```
-识别火灾、烟雾或其他安全隐患
-```
+Enter the anomaly types you want to detect in the "Anomaly Detection Instructions" field, for example:
 
 ```
-监测入侵者或未授权人员进入
+Detect person falling or tripping behavior
 ```
 
-### 3. 分析结果
+```
+Identify fire, smoke, or other security hazards
+```
 
-系统将提供以下信息：
-- **异常状态**: 是否检测到异常
-- **置信度**: 检测结果的可信程度 (0-100%)
-- **异常类型**: 具体检测到的异常类型
-- **时间戳**: 异常发生的具体时间点
-- **详细描述**: 异常情况的详细说明
-- **建议措施**: 推荐的应对方案
+```
+Monitor intruders or unauthorized personnel
+```
 
-## 🔧 API 接口
+### 3. Analysis Results
 
-### 上传并分析视频
+The system provides the following information:
+- **Anomaly Status**: Whether anomalies were detected
+- **Confidence Score**: Reliability of detection results (0-100%)
+- **Anomaly Type**: Specific types of anomalies detected
+- **Timestamps**: Specific time points when anomalies occurred
+- **Detailed Description**: Detailed explanation of anomaly situations
+- **Recommendations**: Suggested response actions
+
+## 🔧 API Endpoints
+
+### Upload and Analyze Video
 
 ```http
 POST /upload
 Content-Type: multipart/form-data
 
 Parameters:
-- video: 视频文件
-- anomaly_prompt: 异常检测指令
+- video: Video file
+- anomaly_prompt: Anomaly detection instructions
 ```
 
-**响应示例:**
+### Analyze Demo Video
+
+```http
+POST /analyze-demo
+Content-Type: multipart/form-data
+
+Parameters:
+- demo_video: Demo video filename (video_fire.mp4 or video_thief.mp4)
+- anomaly_prompt: Anomaly detection instructions
+```
+
+**Response Example:**
 ```json
 {
   "success": true,
@@ -176,134 +198,141 @@ Parameters:
   "analysis": {
     "has_anomaly": true,
     "confidence_score": 0.85,
-    "anomaly_type": "人员跌倒",
+    "anomaly_type": "Person falling",
     "detected_frames": [45, 60],
     "timestamps": [1.5, 2.0],
-    "description": "检测到人员在1.5秒和2.0秒时刻出现跌倒行为",
-    "recommendations": "立即派遣救援人员"
-  }
+    "description": "Detected person falling behavior at 1.5s and 2.0s",
+    "recommendations": "Dispatch rescue personnel immediately"
+  },
+  "demo_video_used": "video_fire.mp4"
 }
 ```
 
-### 健康检查
+### Health Check
 
 ```http
 GET /health
 ```
 
-### 测试 Azure 连接
+### Test Azure Connection
 
 ```http
 GET /test-connection
 ```
 
-## 🛠️ 开发指南
+## 🛠️ Development Guide
 
-### 项目结构
+### Project Structure
 
 ```
 video-anomaly-detector/
 ├── app/
-│   ├── app.py                 # Flask 主应用
-│   ├── azure_ai_analyzer.py   # Azure AI 分析模块
+│   ├── app.py                 # Flask main application
+│   ├── azure_ai_analyzer.py   # Azure AI analysis module
 │   ├── templates/
-│   │   └── index.html         # Web 界面模板
-│   └── static/                # 静态资源
+│   │   └── index.html         # Web interface template
+│   └── static/
+│       └── videos/            # Demo video files
 ├── azure/
-│   ├── deploy-to-azure.ps1    # PowerShell 部署脚本
-│   ├── deploy-to-azure.sh     # Bash 部署脚本
-│   ├── one-click-deploy.sh    # 一键部署脚本
-│   └── kubernetes-deployment.yaml # K8s 配置
-├── uploads/                   # 上传文件临时目录
-├── Dockerfile                 # Docker 镜像配置
-├── docker-compose.yml         # Docker Compose 配置
-├── requirements.txt           # Python 依赖
-├── .env.example              # 环境变量模板
-└── README.md                 # 项目文档
+│   ├── deploy-to-azure.ps1    # PowerShell deployment script
+│   ├── deploy-to-azure.sh     # Bash deployment script
+│   ├── one-click-deploy.sh    # One-click deployment script
+│   └── kubernetes-deployment.yaml # K8s configuration
+├── uploads/                   # Upload temporary directory
+├── Dockerfile                 # Docker image configuration
+├── docker-compose.yml         # Docker Compose configuration
+├── requirements.txt           # Python dependencies
+├── .env.example              # Environment variables template
+└── README.md                 # Project documentation
 ```
 
-### 本地开发
+### Local Development
 
 ```bash
-# 创建虚拟环境
+# Create virtual environment
 python -m venv venv
 
-# 激活虚拟环境
+# Activate virtual environment
 # Windows
 venv\Scripts\activate
 # Linux/macOS
 source venv/bin/activate
 
-# 安装依赖
+# Install dependencies
 pip install -r requirements.txt
 
-# 设置环境变量
+# Set environment variables
 export FLASK_ENV=development
 export AZURE_OPENAI_API_KEY=your_key_here
 export AZURE_OPENAI_ENDPOINT=your_endpoint_here
 
-# 运行应用
+# Run application
 cd app
 python app.py
 ```
 
-## 🔍 故障排除
+## 🔍 Troubleshooting
 
-### 常见问题
+### Common Issues
 
-1. **Azure OpenAI 连接失败**
-   - 检查 API Key 和 Endpoint 是否正确
-   - 确认部署模型名称是否匹配
-   - 验证网络连接
+1. **Azure OpenAI Connection Failure**
+   - Verify API Key and Endpoint are correct
+   - Confirm deployment model name matches
+   - Check network connectivity
 
-2. **视频上传失败**
-   - 检查文件格式是否支持
-   - 确认文件大小不超过 50MB
-   - 验证网络稳定性
+2. **Video Upload Failure**
+   - Check if file format is supported
+   - Ensure file size doesn't exceed 50MB
+   - Verify network stability
 
-3. **分析结果异常**
-   - 确认 prompt 描述清晰
-   - 检查视频质量和清晰度
-   - 验证模型配置
+3. **Analysis Results Anomaly**
+   - Ensure prompt description is clear
+   - Check video quality and clarity
+   - Verify model configuration
 
-### 日志查看
+4. **Demo Video Preview Issues**
+   - Ensure browser supports HTML5 video
+   - Check if demo videos exist in static/videos/
+   - Verify video file permissions
+
+### View Logs
 
 ```bash
-# Docker 环境日志
-docker-compose logs -f
+# Docker environment logs
+docker logs video-anomaly-detector -f
 
-# Azure Container Apps 日志
+# Azure Container Apps logs
 az containerapp logs show --name video-anomaly-detector --resource-group rg-video-anomaly-detector --follow
 ```
 
-## 🤝 贡献指南
+## 🤝 Contributing
 
-欢迎提交 Issue 和 Pull Request！
+Welcome to submit Issues and Pull Requests!
 
-1. Fork 项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建 Pull Request
+1. Fork the project
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Create Pull Request
 
-## 📄 许可证
+## 📄 License
 
-本项目基于 MIT 许可证开源。详见 [LICENSE](LICENSE) 文件。
+This project is open source under the MIT License. See [LICENSE](LICENSE) file for details.
 
-## 🙏 致谢
+## 🙏 Acknowledgments
 
 - [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
 - [Flask](https://flask.palletsprojects.com/)
 - [OpenCV](https://opencv.org/)
 - [Bootstrap](https://getbootstrap.com/)
 
-## 📧 联系我们
+## 📧 Contact
 
-如有问题或建议，请通过以下方式联系：
+For questions or suggestions, please contact us through:
 
 - 📧 Email: your-email@example.com
-- 🐙 GitHub Issues: [提交 Issue](https://github.com/your-username/video-anomaly-detector/issues)
+- 🐙 GitHub Issues: [Submit Issue](https://github.com/your-username/video-anomaly-detector/issues)
 
 ---
 
-**💡 提示**: 确保在生产环境中使用 HTTPS 和适当的安全配置。
+**💡 Note**: Ensure to use HTTPS and appropriate security configurations in production environments.
