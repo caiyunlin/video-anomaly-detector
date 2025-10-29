@@ -305,15 +305,6 @@ docker logs video-anomaly-detector -f
 az containerapp logs show --name video-anomaly-detector --resource-group rg-video-anomaly-detector --follow
 ```
 
-## 🤝 Contributing
-
-Welcome to submit Issues and Pull Requests!
-
-1. Fork the project
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Create Pull Request
 
 ## 📄 License
 
