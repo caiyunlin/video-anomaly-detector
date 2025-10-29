@@ -319,20 +319,6 @@ Welcome to submit Issues and Pull Requests!
 
 This project is open source under the MIT License. See [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
-
-- [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
-- [Flask](https://flask.palletsprojects.com/)
-- [OpenCV](https://opencv.org/)
-- [Bootstrap](https://getbootstrap.com/)
-
-## 📧 Contact
-
-For questions or suggestions, please contact us through:
-
-- 📧 Email: your-email@example.com
-- 🐙 GitHub Issues: [Submit Issue](https://github.com/your-username/video-anomaly-detector/issues)
-
 ---
 
 **💡 Note**: Ensure to use HTTPS and appropriate security configurations in production environments.
